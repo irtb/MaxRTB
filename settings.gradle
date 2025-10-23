@@ -1,7 +1,13 @@
-include ':ks'
 include ':core'
-include ':gdt'
-include ':csj'
-include ':baidu'
-include ':demo'
-include ':mg'
+
+// 新增模块
+include ':zhixuan'
+include ':zxdemo'
+
+// 暂时注释掉其他模块
+// include ':ks'
+// include ':gdt'
+// include ':csj'
+// include ':baidu'
+// include ':demo'
+// include ':mg'
