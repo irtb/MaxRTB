@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FA">
+
+    <!-- 顶部栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#2196F3"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🎁 激励视频"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- 内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 信息卡片 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="📋 广告信息"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#2196F3"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• 广告类型: 激励视频\n• 时长: 15-30秒\n• 倒计时: 5秒后可跳过\n• 特点: 完看获得奖励"
+                        android:textSize="13sp"
+                        android:textColor="#666"
+                        android:lineSpacingMultiplier="1.5" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 操作按钮 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_load_reward"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="📥 加载激励视频"
+                android:textSize="16sp"
+                android:layout_marginBottom="12dp"
+                app:cornerRadius="8dp"
+                app:backgroundTint="#2196F3" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_show_reward"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="▶️ 播放视频"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"
+                app:cornerRadius="8dp"
+                app:backgroundTint="#FF9800" />
+
+            <!-- 进度条 -->
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                style="?android:attr/progressBarStyleHorizontal" />
+
+            <!-- 状态显示 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📊 状态信息"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:layout_marginBottom="8dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <TextView
+                    android:id="@+id/tv_reward_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="等待操作..."
+                    android:textSize="13sp"
+                    android:textColor="#666"
+                    android:padding="16dp"
+                    android:lineSpacingMultiplier="1.6" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 奖励提示 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="#E8F5E9">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="💰 奖励说明"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2E7D32"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="✅ 完整观看: 获得 100 金币&#10;⏭️ 提前跳过: 无奖励&#10;🔄 每天可观看: 5 次"
+                        android:textSize="12sp"
+                        android:textColor="#2E7D32"
+                        android:lineSpacingMultiplier="1.8" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

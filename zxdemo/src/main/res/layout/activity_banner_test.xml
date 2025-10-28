@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FA">
+
+    <Button
+        android:id="@+id/btn_load"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="📥 加载 Banner 广告"
+        android:textSize="18sp"
+        android:layout_margin="16dp" />
+
+    <FrameLayout
+        android:id="@+id/ad_container"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="#FFFFFF"
+        android:layout_margin="16dp" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="等待加载..."
+        android:textSize="14sp"
+        android:textColor="#666"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:background="#FFFFFF" />
+
+</LinearLayout>

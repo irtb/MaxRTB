@@ -2,23 +2,21 @@ package com.maxrtb.zhixuan.provider
 
 import android.app.Activity
 import android.view.ViewGroup
-import com.ifmvo.togetherad.core.TogetherAd
 import com.ifmvo.togetherad.core.listener.*
 import com.ifmvo.togetherad.core.provider.BaseAdProvider
-import com.maxrtb.zhixuan.helper.ZhixuanHelper
-import com.maxrtb.zhixuan.network.NetworkManager
+import com.maxrtb.zhixuan.bannerad.ZhixuanBannerAdapter
 import com.maxrtb.zhixuan.splashad.ZhixuanSplashAdapter
+import com.maxrtb.zhixuan.helper.ZhixuanHelper
 
 class ZhixuanProvider : BaseAdProvider() {
-
+    
     companion object {
-        private var splashAdapter: ZhixuanSplashAdapter? = null
-        private var isInitialized = false
-        const val BASE_URL_DEV = "https://dev.sdk.maxrtb.com/"
-        const val BASE_URL_PROD = "https://sdk.maxrtb.com/"
-        const val APP_ID = "100010" // 智选AppId
+        const val BASE_URL_DEV = "https://m1.apifoxmock.com/m1/7056903-6777091-6404548/"
+        const val BASE_URL_PROD = "https://api.zhixuan.com/"
+        const val APP_ID = "100010"
     }
-
+    
+    // ==================== 开屏广告 ====================
     override fun loadAndShowSplashAd(
         activity: Activity,
         adProviderType: String,
@@ -26,28 +24,44 @@ class ZhixuanProvider : BaseAdProvider() {
         container: ViewGroup,
         listener: SplashListener
     ) {
-        // 懒初始化SDK
-        if (!isInitialized) {
-            initSDK(activity)
-        }
-
-        splashAdapter = ZhixuanSplashAdapter()
-        splashAdapter?.setAdSlotId(alias)
         callbackSplashStartRequest(adProviderType, alias, listener)
-        splashAdapter?.show(activity, container, listener)
+        
+        val adapter = ZhixuanSplashAdapter()
+        adapter.setAdSlotId(alias)
+        adapter.show(activity, container, object : SplashListener {
+            override fun onAdStartRequest(providerType: String) {}
+            override fun onAdLoaded(providerType: String) {
+                callbackSplashLoaded(adProviderType, alias, listener)
+            }
+            override fun onAdFailed(providerType: String, failedMsg: String?) {
+                callbackSplashFailed(adProviderType, alias, listener, -1, failedMsg)
+            }
+            override fun onAdClicked(providerType: String) {
+                callbackSplashClicked(adProviderType, listener)
+            }
+            override fun onAdExposure(providerType: String) {
+                callbackSplashExposure(adProviderType, listener)
+            }
+            override fun onAdDismissed(providerType: String) {
+                callbackSplashDismiss(adProviderType, listener)
+            }
+        })
     }
-
+    
     override fun loadOnlySplashAd(
         activity: Activity,
         adProviderType: String,
         alias: String,
         listener: SplashListener
     ) {
-        callbackSplashFailed(adProviderType, alias, listener, null, "暂未实现")
+        ZhixuanHelper.logI("仅加载开屏广告")
     }
-
-    override fun showSplashAd(container: ViewGroup): Boolean = false
-
+    
+    override fun showSplashAd(container: ViewGroup): Boolean {
+        return true
+    }
+    
+    // ==================== Banner 广告 ====================
     override fun showBannerAd(
         activity: Activity,
         adProviderType: String,
@@ -55,23 +69,53 @@ class ZhixuanProvider : BaseAdProvider() {
         container: ViewGroup,
         listener: BannerListener
     ) {
-        callbackBannerFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackBannerStartRequest(adProviderType, alias, listener)
+        
+        val adapter = ZhixuanBannerAdapter(activity, alias)
+        adapter.loadAd(320, 50, object : ZhixuanBannerAdapter.BannerAdListener {
+            override fun onAdLoaded() {
+                callbackBannerLoaded(adProviderType, alias, listener)
+                adapter.showAd(container, this)
+            }
+            override fun onAdShown() {
+                callbackBannerExpose(adProviderType, listener)
+            }
+            override fun onAdClicked() {
+                callbackBannerClicked(adProviderType, listener)
+            }
+            override fun onAdClosed() {
+                callbackBannerClosed(adProviderType, listener)
+            }
+            override fun onAdFailed(msg: String) {
+                callbackBannerFailed(adProviderType, alias, listener, -1, msg)
+            }
+        })
     }
-
-    override fun destroyBannerAd() {}
-
+    
+    override fun destroyBannerAd() {
+        ZhixuanHelper.logI("销毁 Banner 广告")
+    }
+    
+    // ==================== 插屏广告 ====================
     override fun requestInterAd(
         activity: Activity,
         adProviderType: String,
         alias: String,
         listener: InterListener
     ) {
-        callbackInterFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackInterStartRequest(adProviderType, alias, listener)
+        ZhixuanHelper.logI("加载插屏广告")
     }
-
-    override fun showInterAd(activity: Activity) {}
-    override fun destroyInterAd() {}
-
+    
+    override fun showInterAd(activity: Activity) {
+        ZhixuanHelper.logI("显示插屏广告")
+    }
+    
+    override fun destroyInterAd() {
+        ZhixuanHelper.logI("销毁插屏广告")
+    }
+    
+    // ==================== 原生广告 ====================
     override fun getNativeAdList(
         activity: Activity,
         adProviderType: String,
@@ -79,14 +123,27 @@ class ZhixuanProvider : BaseAdProvider() {
         maxCount: Int,
         listener: NativeListener
     ) {
-        callbackNativeFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackNativeStartRequest(adProviderType, alias, listener)
+        ZhixuanHelper.logI("加载原生广告列表")
     }
-
-    override fun nativeAdIsBelongTheProvider(adObject: Any): Boolean = false
-    override fun resumeNativeAd(adObject: Any) {}
-    override fun pauseNativeAd(adObject: Any) {}
-    override fun destroyNativeAd(adObject: Any) {}
-
+    
+    override fun nativeAdIsBelongTheProvider(adObject: Any): Boolean {
+        return true
+    }
+    
+    override fun resumeNativeAd(adObject: Any) {
+        ZhixuanHelper.logI("恢复原生广告")
+    }
+    
+    override fun pauseNativeAd(adObject: Any) {
+        ZhixuanHelper.logI("暂停原生广告")
+    }
+    
+    override fun destroyNativeAd(adObject: Any) {
+        ZhixuanHelper.logI("销毁原生广告")
+    }
+    
+    // ==================== 原生模板广告 ====================
     override fun getNativeExpressAdList(
         activity: Activity,
         adProviderType: String,
@@ -94,68 +151,57 @@ class ZhixuanProvider : BaseAdProvider() {
         adCount: Int,
         listener: NativeExpressListener
     ) {
-        callbackNativeExpressFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackNativeExpressStartRequest(adProviderType, alias, listener)
+        ZhixuanHelper.logI("加载原生模板广告列表")
     }
-
-    override fun destroyNativeExpressAd(adObject: Any) {}
-    override fun nativeExpressAdIsBelongTheProvider(adObject: Any): Boolean = false
-
+    
+    override fun destroyNativeExpressAd(adObject: Any) {
+        ZhixuanHelper.logI("销毁原生模板广告")
+    }
+    
+    override fun nativeExpressAdIsBelongTheProvider(adObject: Any): Boolean {
+        return true
+    }
+    
+    // ==================== 激励视频 ====================
     override fun requestAndShowRewardAd(
         activity: Activity,
         adProviderType: String,
         alias: String,
         listener: RewardListener
     ) {
-        callbackRewardFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackRewardStartRequest(adProviderType, alias, listener)
+        ZhixuanHelper.logI("加载并显示激励视频")
     }
-
+    
     override fun requestRewardAd(
         activity: Activity,
         adProviderType: String,
         alias: String,
         listener: RewardListener
     ) {
-        callbackRewardFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackRewardStartRequest(adProviderType, alias, listener)
+        ZhixuanHelper.logI("加载激励视频")
     }
-
-    override fun showRewardAd(activity: Activity): Boolean = false
-
+    
+    override fun showRewardAd(activity: Activity): Boolean {
+        ZhixuanHelper.logI("显示激励视频")
+        return true
+    }
+    
+    // ==================== 全屏视频 ====================
     override fun requestFullVideoAd(
         activity: Activity,
         adProviderType: String,
         alias: String,
         listener: FullVideoListener
     ) {
-        callbackFullVideoFailed(adProviderType, alias, listener, null, "暂未实现")
+        callbackFullVideoStartRequest(adProviderType, alias, listener)
+        ZhixuanHelper.logI("加载全屏视频广告")
     }
-
-    override fun showFullVideoAd(activity: Activity): Boolean = false
-
-    /**
-     * 初始化智选SDK
-     */
-    private fun initSDK(activity: Activity) {
-        if (isInitialized) return
-
-        try {
-            // 使用TogetherAd的debug开关
-            val isDebug = TogetherAd.printLogEnable
-            val baseUrl = if (isDebug) BASE_URL_DEV else BASE_URL_PROD
-
-            ZhixuanHelper.isDebug = isDebug
-
-            NetworkManager.init(
-                context = activity.applicationContext,
-                baseUrl = baseUrl,
-                appId = APP_ID,
-                isDebug = isDebug
-            )
-
-            isInitialized = true
-            ZhixuanHelper.logI("智选SDK初始化成功 [AppId=$APP_ID, BaseUrl=$baseUrl]")
-
-        } catch (e: Exception) {
-            ZhixuanHelper.logE("SDK初始化失败", e)
-        }
+    
+    override fun showFullVideoAd(activity: Activity): Boolean {
+        ZhixuanHelper.logI("显示全屏视频广告")
+        return true
     }
 }

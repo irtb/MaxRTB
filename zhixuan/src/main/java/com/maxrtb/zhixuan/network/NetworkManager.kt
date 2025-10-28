@@ -1,51 +1,52 @@
 package com.maxrtb.zhixuan.network
 
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.maxrtb.zhixuan.api.ZhixuanApiService
+import com.maxrtb.zhixuan.model.BidRequest
+import com.maxrtb.zhixuan.model.BidResponse
+import com.maxrtb.zhixuan.helper.ZhixuanHelper
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 object NetworkManager {
-    private lateinit var apiService: ZhixuanApiService
-    private lateinit var appContext: Context
-    private var appId: String = ""
-
-    fun init(context: Context, baseUrl: String, appId: String, isDebug: Boolean) {
-        this.appContext = context.applicationContext
-        this.appId = appId
-
+    
+    private val apiService: ApiService
+    
+    init {
+        // 创建日志拦截器
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            ZhixuanHelper.logI("OkHttp: $message")
+        }.apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        
         val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
-            .apply {
-                if (isDebug) {
-                    addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
-                }
-            }
+            .addInterceptor(loggingInterceptor)
             .build()
-
-        val gson: Gson = GsonBuilder()
-            .setLenient()
-            .create()
-
+        
         val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl("https://m1.apifoxmock.com/m1/7056903-6777091-6404548/")
+            .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-
-        apiService = retrofit.create(ZhixuanApiService::class.java)
+        
+        apiService = retrofit.create(ApiService::class.java)
     }
+    
+    fun requestBid(request: BidRequest): Call<BidResponse> {
+        ZhixuanHelper.logI("========== 发送竞价请求 ==========")
+        ZhixuanHelper.logI("请求URL: https://m1.apifoxmock.com/m1/7056903-6777091-6404548/api/v2/bid")
+        ZhixuanHelper.logI("请求体: $request")
+        ZhixuanHelper.logI("============================")
+        
+        return apiService.requestBid(request)
+    }
+}
 
-    fun getApiService(): ZhixuanApiService = apiService
-    fun getContext(): Context = appContext
-    fun getAppId(): String = appId
+interface ApiService {
+    @retrofit2.http.POST("api/v2/bid")
+    fun requestBid(@retrofit2.http.Body request: BidRequest): Call<BidResponse>
 }

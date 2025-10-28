@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">智选广告Demo</string>
+    <string name="app_name">智选SDK</string>
     <string name="splash_test">开屏广告测试</string>
     <string name="loading">加载中...</string>
     <string name="ad_loading">广告加载中</string>

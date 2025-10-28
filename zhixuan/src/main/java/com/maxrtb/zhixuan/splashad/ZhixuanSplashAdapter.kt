@@ -3,10 +3,11 @@ package com.maxrtb.zhixuan.splashad
 import android.app.Activity
 import android.view.ViewGroup
 import com.ifmvo.togetherad.core.listener.SplashListener
-import com.maxrtb.zhixuan.api.model.*
+import com.maxrtb.zhixuan.model.*
 import com.maxrtb.zhixuan.helper.DeviceHelper
 import com.maxrtb.zhixuan.helper.ZhixuanHelper
 import com.maxrtb.zhixuan.network.NetworkManager
+import com.maxrtb.zhixuan.provider.ZhixuanProvider
 import com.maxrtb.zhixuan.tracker.AdTracker
 import com.maxrtb.zhixuan.view.SplashAdView
 import retrofit2.Call
@@ -18,7 +19,6 @@ class ZhixuanSplashAdapter {
 
     private var splashAdView: SplashAdView? = null
     private var currentBid: Bid? = null
-    private var adTracker: AdTracker? = null
     private val mProviderType: String = "zhixuan"
     private var mAdSlotId: String? = null
 
@@ -34,13 +34,13 @@ class ZhixuanSplashAdapter {
             return
         }
 
-        ZhixuanHelper.logD("开始请求开屏广告: slotId=$slotId")
+        ZhixuanHelper.logI("开始请求开屏广告: slotId=$slotId")
         listener.onAdStartRequest(mProviderType)
 
         try {
             val request = buildBidRequest(activity, slotId)
 
-            NetworkManager.getApiService().bid(request).enqueue(object : Callback<BidResponse> {
+            NetworkManager.requestBid(request).enqueue(object : Callback<BidResponse> {
                 override fun onResponse(call: Call<BidResponse>, response: Response<BidResponse>) {
                     handleBidResponse(activity, container, response, listener)
                 }
@@ -83,8 +83,10 @@ class ZhixuanSplashAdapter {
         }
 
         currentBid = bid
-        adTracker = AdTracker(bid)
-        adTracker?.notifyBidSuccess()
+        
+        bid.nurl?.let { nurl ->
+            AdTracker.trackImpression(listOf(nurl))
+        }
 
         ZhixuanHelper.logI("广告请求成功: bidId=${bid.id}, price=${bid.price}")
         listener.onAdLoaded(mProviderType)
@@ -93,7 +95,9 @@ class ZhixuanSplashAdapter {
     }
 
     private fun buildBidRequest(activity: Activity, slotId: String): BidRequest {
-        val deviceHelper = DeviceHelper(activity)
+        val deviceInfo = DeviceHelper.getDeviceInfo(activity)
+        val screenWidth = deviceInfo.w ?: 1080
+        val screenHeight = deviceInfo.h ?: 2217
 
         return BidRequest(
             id = UUID.randomUUID().toString(),
@@ -102,34 +106,25 @@ class ZhixuanSplashAdapter {
                     id = "1",
                     tagid = slotId,
                     banner = Banner(
-                        w = deviceHelper.getScreenWidth(),
-                        h = deviceHelper.getScreenHeight(),
+                        w = screenWidth,
+                        h = screenHeight,
                         pos = 7
                     ),
                     instl = 0,
-                    secure = 1
+                    secure = 1,
+                    bidfloor = 0.0,
+                    bidfloorcur = "CNY"
                 )
             ),
             app = App(
-                id = NetworkManager.getAppId(),
-                name = deviceHelper.getAppName(),
-                bundle = deviceHelper.getPackageName(),
-                ver = deviceHelper.getAppVersion()
+                id = ZhixuanProvider.APP_ID,
+                name = activity.packageName,
+                bundle = activity.packageName,
+                ver = "1.0.0"
             ),
-            device = Device(
-                ua = deviceHelper.getUserAgent(),
-                ip = deviceHelper.getIpAddress(),
-                devicetype = 4,
-                make = deviceHelper.getManufacturer(),
-                model = deviceHelper.getModel(),
-                os = "Android",
-                osv = deviceHelper.getOsVersion(),
-                w = deviceHelper.getScreenWidth(),
-                h = deviceHelper.getScreenHeight(),
-                language = deviceHelper.getLanguage(),
-                ifa = deviceHelper.getGaid()
-            ),
-            test = 0
+            device = deviceInfo,
+            test = 0,
+            tmax = 5000
         )
     }
 
@@ -140,13 +135,17 @@ class ZhixuanSplashAdapter {
                 override fun onAdShown() {
                     ZhixuanHelper.logI("广告曝光")
                     listener.onAdExposure(mProviderType)
-                    adTracker?.trackImpression()
+                    bid.ext?.imptrackers?.let { trackers ->
+                        AdTracker.trackImpression(trackers)
+                    }
                 }
 
                 override fun onAdClicked() {
                     ZhixuanHelper.logI("广告点击")
                     listener.onAdClicked(mProviderType)
-                    adTracker?.trackClick()
+                    bid.ext?.clicktrackers?.let { trackers ->
+                        AdTracker.trackClick(trackers)
+                    }
                 }
 
                 override fun onAdDismissed() {
@@ -178,6 +177,5 @@ class ZhixuanSplashAdapter {
         splashAdView?.destroy()
         splashAdView = null
         currentBid = null
-        adTracker = null
     }
 }

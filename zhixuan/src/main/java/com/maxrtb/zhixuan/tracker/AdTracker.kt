@@ -1,51 +1,76 @@
 package com.maxrtb.zhixuan.tracker
 
-import com.maxrtb.zhixuan.api.model.Bid
-import com.maxrtb.zhixuan.helper.MacroReplacer
 import com.maxrtb.zhixuan.helper.ZhixuanHelper
-import okhttp3.Call
-import okhttp3.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
 
-class AdTracker(private val bid: Bid) {
-
-    private val httpClient = OkHttpClient()
-
-    fun notifyBidSuccess() {
-        bid.nurl?.let { url ->
-            val replacedUrl = MacroReplacer.replace(url, bid.price)
-            sendTracking(replacedUrl, "BidSuccess")
-        }
+/**
+ * 广告监测上报
+ */
+object AdTracker {
+    
+    private val client = OkHttpClient()
+    
+    /**
+     * 曝光监测
+     */
+    fun trackImpression(urls: List<String>) {
+        track(urls, "曝光")
     }
-
-    fun trackImpression() {
-        bid.ext?.imptrackers?.forEach { url ->
-            val replacedUrl = MacroReplacer.replace(url, bid.price)
-            sendTracking(replacedUrl, "Impression")
-        }
+    
+    /**
+     * 点击监测
+     */
+    fun trackClick(urls: List<String>) {
+        track(urls, "点击")
     }
-
-    fun trackClick() {
-        bid.ext?.clicktrackers?.forEach { url ->
-            val replacedUrl = MacroReplacer.replace(url, bid.price)
-            sendTracking(replacedUrl, "Click")
-        }
+    
+    /**
+     * 视频开始监测
+     */
+    fun trackVideoStart(urls: List<String>) {
+        track(urls, "视频开始")
     }
-
-    private fun sendTracking(url: String, type: String) {
-        val request = Request.Builder().url(url).build()
-
-        httpClient.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                ZhixuanHelper.logD("$type 上报成功: $url")
+    
+    /**
+     * 视频完成监测
+     */
+    fun trackVideoComplete(urls: List<String>) {
+        track(urls, "视频完成")
+    }
+    
+    /**
+     * 视频关闭监测
+     */
+    fun trackVideoClose(urls: List<String>) {
+        track(urls, "视频关闭")
+    }
+    
+    /**
+     * 执行上报
+     */
+    private fun track(urls: List<String>, type: String) {
+        if (urls.isEmpty()) return
+        
+        CoroutineScope(Dispatchers.IO).launch {
+            urls.forEach { url ->
+                try {
+                    val request = Request.Builder().url(url).build()
+                    val response = client.newCall(request).execute()
+                    
+                    if (response.isSuccessful) {
+                        ZhixuanHelper.logI("${type}上报成功: $url")
+                    } else {
+                        ZhixuanHelper.logE("${type}上报失败: ${response.code}")
+                    }
+                    response.close()
+                } catch (e: Exception) {
+                    ZhixuanHelper.logE("${type}上报异常: $url", e)
+                }
             }
-
-            override fun onFailure(call: Call, e: IOException) {
-                ZhixuanHelper.logE("$type 上报失败: $url", e)
-            }
-        })
+        }
     }
 }

@@ -4,7 +4,7 @@ import android.util.Log
 
 object ZhixuanHelper {
     private const val TAG = "Zhixuan"
-    var isDebug = false  // 添加这个变量
+    var isDebug = true
 
     fun logD(msg: String) {
         if (isDebug) Log.d(TAG, msg)
@@ -18,6 +18,12 @@ object ZhixuanHelper {
         if (isDebug) {
             if (throwable != null) Log.e(TAG, msg, throwable)
             else Log.e(TAG, msg)
+        }
+    }
+    
+    fun logW(msg: String) {
+        if (isDebug) {
+            Log.w(TAG, msg)
         }
     }
 }

@@ -1,0 +1,36 @@
+快速开始指南
+============
+
+1. 复制 AAR 文件
+   cp aar/zhixuan-sdk-1.0.0.aar your-project/app/libs/
+
+2. 配置 Gradle 依赖
+   dependencies {
+       implementation fileTree(dir: 'libs', include: ['*.aar'])
+       implementation 'androidx.core:core-ktx:1.12.0'
+       implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+       implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+       implementation 'com.github.bumptech.glide:glide:4.16.0'
+       implementation 'com.google.code.gson:gson:2.10.1'
+       implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+       implementation 'com.github.ifmvo:togetherad-core:3.0.3'
+   }
+
+3. 初始化 SDK
+   import com.maxrtb.zhixuan.manager.ZhixuanAdManager
+   
+   class MyApplication : Application() {
+       override fun onCreate() {
+           super.onCreate()
+           ZhixuanAdManager.init(this)
+           ZhixuanAdManager.setDebugEnabled(BuildConfig.DEBUG)
+       }
+   }
+
+4. 加载广告
+   val provider = ZhixuanProvider()
+   provider.loadAndShowSplashAd(...)
+
+5. 更多详情查看 docs/ 目录
+
+支持: support@maxrtb.com

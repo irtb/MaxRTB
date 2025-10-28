@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FA">
+
+    <!-- 顶部栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/primary"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="🎯 原生广告"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- 内容区域 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 信息卡片 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="📋 广告信息"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• 广告类型: 原生广告\n• 特点: 完全自定义布局\n• 灵活性: 最高\n• 融合度: 最佳"
+                        android:textSize="13sp"
+                        android:textColor="#666"
+                        android:lineSpacingMultiplier="1.5" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 操作按钮 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_load_native"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="📥 加载原生广告"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"
+                app:cornerRadius="8dp"
+                app:backgroundTint="@color/primary" />
+
+            <!-- 原生广告容器 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📺 广告展示区域"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:id="@+id/native_ad_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:gravity="center"
+                    android:text="点击上方按钮加载原生广告"
+                    android:textColor="#999"
+                    android:textSize="14sp"
+                    android:background="@drawable/placeholder_bg" />
+
+            </LinearLayout>
+
+            <!-- 状态显示 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📊 状态信息"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="8dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <TextView
+                    android:id="@+id/tv_native_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="等待操作..."
+                    android:textSize="13sp"
+                    android:textColor="#666"
+                    android:padding="16dp"
+                    android:lineSpacingMultiplier="1.6" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 原生广告特点 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="#F3E5F5">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="✨ 原生广告特点"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#6A1B9A"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="✅ 完全自定义布局\n✅ 与应用界面融合\n✅ 最高转化率\n✅ 灵活组件配置\n✅ 支持图文并茂"
+                        android:textSize="12sp"
+                        android:textColor="#6A1B9A"
+                        android:lineSpacingMultiplier="1.8" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

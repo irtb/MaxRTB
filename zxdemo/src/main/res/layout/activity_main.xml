@@ -2,35 +2,71 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:background="#F8F9FA">
 
     <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="智选广告SDK Demo"
-        android:textColor="@color/black"
+        android:text="智选广告 SDK Demo"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="#2196F3"
+        android:padding="20dp"
+        android:gravity="center" />
 
-    <TextView
-        android:id="@+id/tv_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:gravity="center"
-        android:lineSpacingExtra="8dp"
-        android:text="SDK信息"
-        android:textColor="@color/black"
-        android:textSize="16sp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_restart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="重新测试开屏广告" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <Button
+                android:id="@+id/btn_splash"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="🎨 开屏广告"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btn_banner"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="📢 Banner 广告"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btn_inter"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="📱 插屏广告"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btn_reward"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="🎁 激励视频"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btn_native"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="🎯 原生广告"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
