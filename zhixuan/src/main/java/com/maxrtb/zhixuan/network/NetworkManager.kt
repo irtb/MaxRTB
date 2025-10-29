@@ -1,15 +1,16 @@
 package com.maxrtb.zhixuan.network
 
+import com.maxrtb.zhixuan.BuildConfig
+import com.maxrtb.zhixuan.helper.ZhixuanHelper
 import com.maxrtb.zhixuan.model.BidRequest
 import com.maxrtb.zhixuan.model.BidResponse
-import com.maxrtb.zhixuan.helper.ZhixuanHelper
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+
 
 object NetworkManager {
     
@@ -22,13 +23,19 @@ object NetworkManager {
         }.apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-        
+
         val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(false)
             .addInterceptor(loggingInterceptor)
             .build()
-        
+
+        val baseUrl = BuildConfig.ZHIXUAN_BASE_URL
+
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://m1.apifoxmock.com/m1/7056903-6777091-6404548/")
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -38,7 +45,7 @@ object NetworkManager {
     
     fun requestBid(request: BidRequest): Call<BidResponse> {
         ZhixuanHelper.logI("========== 发送竞价请求 ==========")
-        ZhixuanHelper.logI("请求URL: https://m1.apifoxmock.com/m1/7056903-6777091-6404548/api/v2/bid")
+        ZhixuanHelper.logI("请求URL: ${(BuildConfig.ZHIXUAN_BASE_URL ?: "mock")}/api/v2/bid")
         ZhixuanHelper.logI("请求体: $request")
         ZhixuanHelper.logI("============================")
         

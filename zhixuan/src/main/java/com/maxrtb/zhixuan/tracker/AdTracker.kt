@@ -6,14 +6,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
+
 
 /**
  * 广告监测上报
  */
 object AdTracker {
     
-    private val client = OkHttpClient()
-    
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(3, TimeUnit.SECONDS)
+        .readTimeout(3, TimeUnit.SECONDS)
+        .build()
+
+    private val gate = Semaphore(5)
+
     /**
      * 曝光监测
      */
@@ -58,6 +66,8 @@ object AdTracker {
         CoroutineScope(Dispatchers.IO).launch {
             urls.forEach { url ->
                 try {
+                    gate.acquire()
+
                     val request = Request.Builder().url(url).build()
                     val response = client.newCall(request).execute()
                     
@@ -73,4 +83,17 @@ object AdTracker {
             }
         }
     }
+
+    private suspend fun retryTrack(url: String, type: String) {
+        com.maxrtb.zhixuan.retry.RetryManager.retry(
+            times = 3, initialDelay = 500, factor = 2f, maxDelay = 2000
+        ) {
+            val req = Request.Builder().url(url).build()
+            client.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) error("${type}重试失败 code=${resp.code}")
+            }
+            ZhixuanHelper.logI("${type}重试成功: $url")
+        }
+    }
+
 }

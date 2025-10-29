@@ -28,16 +28,12 @@ object DeviceHelper {
     }
     
     private fun getScreenWidth(context: Context): Int {
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val metrics = DisplayMetrics()
-        wm.defaultDisplay.getMetrics(metrics)
+        val metrics = context.resources.displayMetrics
         return metrics.widthPixels
     }
     
     private fun getScreenHeight(context: Context): Int {
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val metrics = DisplayMetrics()
-        wm.defaultDisplay.getMetrics(metrics)
+        val metrics = context.resources.displayMetrics
         return metrics.heightPixels
     }
     

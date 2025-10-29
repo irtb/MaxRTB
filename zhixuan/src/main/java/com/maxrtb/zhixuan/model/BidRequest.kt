@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class BidRequest(
     val id: String? = null,
+    val version: String? = "1.1",
     val imp: List<Impression>? = null,
     val app: App? = null,
     val device: Device? = null,

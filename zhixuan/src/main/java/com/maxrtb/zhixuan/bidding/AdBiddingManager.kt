@@ -2,9 +2,23 @@ package com.maxrtb.zhixuan.bidding
 
 import com.maxrtb.zhixuan.model.BidResponse
 import com.maxrtb.zhixuan.helper.ZhixuanHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.util.concurrent.TimeUnit
+
 
 object AdBiddingManager {
-    
+
+    private val http = OkHttpClient.Builder()
+        .connectTimeout(3, TimeUnit.SECONDS)
+        .readTimeout(3, TimeUnit.SECONDS)
+        .build()
+
+
+
     data class BiddingResult(
         val winner: BidResponse,
         val winnerName: String,
@@ -87,9 +101,28 @@ object AdBiddingManager {
     /**
      * 发送竞价通知
      */
-    fun sendWinNotice(winUrl: String, price: Double) {
-        val finalUrl = replacePriceMacro(winUrl, price)
-        ZhixuanHelper.logI("发送竞价胜出通知: $finalUrl")
-        // 实际发送请求
+    fun sendWinNotice(nurl: String?) {
+        if (nurl.isNullOrBlank()) return
+        CoroutineScope(Dispatchers.IO).launch {
+            com.maxrtb.zhixuan.retry.RetryManager.retry(
+                times = 2, initialDelay = 300, factor = 2f, maxDelay = 1000
+            ) {
+                val req = Request.Builder().url(nurl).build()
+                http.newCall(req).execute().use {
+                    if (!it.isSuccessful) error("win 上报失败 code=${it.code}")
+                }
+            }
+            ZhixuanHelper.logI("WIN 通知完成: $nurl")
+        }
     }
+
+    fun sendLossNotice(burl: String?) {
+        if (burl.isNullOrBlank()) return
+        CoroutineScope(Dispatchers.IO).launch {
+            val req = Request.Builder().url(burl).build()
+            runCatching { http.newCall(req).execute().close() }
+        }
+    }
+
+
 }

@@ -171,8 +171,9 @@ class RewardedVideoDialog(
                     // 播放错误回调
                     setOnErrorListener { mp, what, extra ->
                         ZhixuanHelper.logE("视频播放错误: what=$what, extra=$extra")
+                        try { dismiss() } catch (_: Throwable) {}
                         listener.onClosed()
-                        false
+                        true
                     }
                 }
                 

@@ -1,12 +1,17 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
     id 'maven-publish'
 }
+
 
 android {
     namespace 'com.maxrtb.zhixuan'
     compileSdk 34
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         minSdk 21
@@ -15,12 +20,24 @@ android {
         versionName "1.0.0"
 
         consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "ZHIXUAN_BASE_URL", "https://m1.apifoxmock.com/m1/7056903-6777091-6404548/"
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     buildTypes {
+        debug {
+            // 测试版本
+            buildConfigField "String", "ZHIXUAN_BASE_URL", "\"https://m1.apifoxmock.com/m1/7056903-6777091-6404548/\""
+        }
         release {
+            // 生产版本
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "ZHIXUAN_BASE_URL", "\"https://api.zhixuan.com/\""
         }
     }
 
@@ -32,6 +49,14 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            // withJavadocJar() // 若无 javadoc 可先不加
+        }
+    }
+
 }
 
 dependencies {
@@ -70,7 +95,7 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
+                from components["release"]
 
                 groupId = 'com.maxrtb'
                 artifactId = 'zhixuan'
@@ -107,3 +132,17 @@ afterEvaluate {
         }
     }
 }
+
+// afterEvaluate {
+//     publishing {
+//         publications {
+//             register("release", MavenPublication) {
+//                 from components["release"]
+//                 groupId = "com.maxrtb"
+//                 artifactId = "zhixuan"
+//                 version = "1.0.0"
+//             }
+//         }
+//     }
+// }
+

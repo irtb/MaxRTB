@@ -11,12 +11,14 @@ import com.ifmvo.togetherad.core.listener.SplashListener
 import com.maxrtb.zxdemo.R
 import com.maxrtb.zhixuan.provider.ZhixuanProvider
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity(), SplashListener {
 
     private val TAG = "SplashActivity"
     private val provider = ZhixuanProvider()
     private val handler = Handler(Looper.getMainLooper())
     private var isAdLoaded = false
+
+    private var jumped = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +89,22 @@ class SplashActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onAdDismissed(providerType: String) {
+        if (jumped || isFinishing || isDestroyed) return
+        jumped = true
+        runOnUiThread {
+            if (!isFinishing && !isDestroyed) {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (jumped && !isFinishing && !isDestroyed) finish()
     }
 
     override fun onBackPressed() {

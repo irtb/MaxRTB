@@ -16,6 +16,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.maxrtb.zhixuan.model.Bid
 import com.maxrtb.zhixuan.helper.ZhixuanHelper
+import android.os.Handler
+import android.os.Looper
+
 
 class SplashAdView(context: Context) : FrameLayout(context) {
     
@@ -24,6 +27,10 @@ class SplashAdView(context: Context) : FrameLayout(context) {
     private var countDownTimer: CountDownTimer? = null
     private var listener: AdListener? = null
     private var currentBid: Bid? = null
+
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
+
+    @Volatile private var dismissed = false
     
     interface AdListener {
         fun onAdShown()
@@ -147,21 +154,33 @@ class SplashAdView(context: Context) : FrameLayout(context) {
             }
         }
     }
-    
+
     private fun dismiss() {
-        listener?.onAdDismissed()
-        visibility = View.GONE
-        
-        if (context is Activity) {
-            (context as Activity).finish()
+        if (dismissed) return
+        dismissed = true
+        // 统一切到主线程再回调，让外部 Activity 决定跳转与 finish()
+        mainHandler.post {
+            try {
+                listener?.onAdDismissed()
+            } catch (t: Throwable) {
+                ZhixuanHelper.logE("onAdDismissed 回调异常", t)
+            }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
     
     fun destroy() {
         countDownTimer?.cancel()
         countDownTimer = null
+        Glide.with(context).clear(imageView)
         imageView.setImageDrawable(null)
         listener = null
         currentBid = null
     }
+
 }
