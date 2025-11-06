@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    namespace 'com.maxrtb.demo'
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     defaultConfig {
-        applicationId "com.maxrtb.demo"
+        applicationId "com.ifmvo.togetherad.demo"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
@@ -45,22 +44,16 @@ android {
     // 自定义APK文件名
     applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "MaxRTBDemo_${releaseTime()}.apk"
+            outputFileName = "TogetherAdDemo_${releaseTime()}.apk"
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
-    kotlinOptions {
-        jvmTarget = '11'
-    }
-
-    buildFeatures {
-        viewBinding true
-    }
+    repositories { flatDir { dirs 'libs' } }
 }
 
 //获取时间
@@ -69,20 +62,32 @@ static def releaseTime() {
 }
 
 dependencies {
-    // 核心库（必须）
-    implementation project(':core')
-    implementation project(':zx')
-    
-    // Kotlin
-    implementation rootProject.ext.libraries.kotlinStdlib
-    
-    // Android Support（保留原有）
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
-    // 调试工具
+    //内存泄漏检测工具
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 
-    // 多量CPL激励式游戏广告平台（保留原有）
+    //多量CPL激励式游戏广告平台
     implementation(name: 'dy-task-sdk-2.1.8', ext: 'aar')
+
+//    TogetherAd
+    implementation project(':mg')
+    implementation project(':csj')
+    implementation project(':gdt')
+    implementation project(':ks')
+    implementation project(':baidu')
+
+//    //核心库（ 必要 ）
+//    implementation 'com.github.ifmvo.TogetherAd:core:5.2.5'
+//    //腾讯优量汇 （ 可选 ）
+//    implementation 'com.github.ifmvo.TogetherAd:gdt:5.2.5'
+//    //穿山甲 （ 可选 ）
+//    implementation 'com.github.ifmvo.TogetherAd:csj:5.2.5'
+//    //快手联盟 （ 可选 ）
+//    implementation 'com.github.ifmvo.TogetherAd:ks:5.2.5'
+//    //百度百青藤 （ 可选 ）
+//    implementation 'com.github.ifmvo.TogetherAd:baidu:5.2.5'
+
 }

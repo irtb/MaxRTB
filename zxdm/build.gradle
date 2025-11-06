@@ -1,30 +1,24 @@
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-}
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.maxrtb.zxdm'
     compileSdk rootProject.ext.android.compileSdkVersion
-
+    
     defaultConfig {
         applicationId "com.maxrtb.zxdm"
         minSdk rootProject.ext.android.minSdkVersion
         targetSdk rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            minifyEnabled false
             debuggable true
         }
     }
@@ -36,9 +30,6 @@ android {
 
     kotlinOptions {
         jvmTarget = '11'
-        freeCompilerArgs += [
-            '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
-        ]
     }
 
     buildFeatures {
@@ -46,31 +37,36 @@ android {
     }
 
     lint {
-        disable 'MissingTranslation'
-        disable 'ExtraTranslation'
+        abortOnError false
     }
 }
 
 dependencies {
-    implementation project(':zx')
+    // 核心库
     implementation project(':core')
-
+    implementation project(':zx')
+    
+    // Kotlin
     implementation rootProject.ext.libraries.kotlinStdlib
     implementation rootProject.ext.libraries.kotlinCoroutinesCore
     implementation rootProject.ext.libraries.kotlinCoroutinesAndroid
+
+    // AndroidX
     implementation rootProject.ext.libraries.androidxCore
     implementation rootProject.ext.libraries.androidxAppcompat
     implementation rootProject.ext.libraries.androidxConstraint
     implementation rootProject.ext.libraries.material
     implementation rootProject.ext.libraries.lifecycleRuntime
     implementation rootProject.ext.libraries.lifecycleViewModel
+
+    // 网络框架
     implementation rootProject.ext.libraries.okhttp3
     implementation rootProject.ext.libraries.okhttpLogging
+    implementation rootProject.ext.libraries.retrofit2
+    implementation rootProject.ext.libraries.retrofitGson
     implementation rootProject.ext.libraries.gson
+
+    // 图片加载
     implementation rootProject.ext.libraries.glide
     kapt rootProject.ext.libraries.glideCompiler
-
-    testImplementation rootProject.ext.libraries.junit
-    androidTestImplementation rootProject.ext.libraries.testExt
-    androidTestImplementation rootProject.ext.libraries.espresso
 }

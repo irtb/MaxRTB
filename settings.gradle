@@ -21,10 +21,3 @@ rootProject.name = "MaxRTB"
 include ':core'
 include ':zx'
 include ':zxdm'
-
-// 可选：根据需要选择include的Provider
-// include ':csj'
-// include ':gdt'
-// include ':ks'
-// include ':baidu'
-// include ':mg'

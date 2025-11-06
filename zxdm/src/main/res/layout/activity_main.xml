@@ -3,60 +3,70 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#F8F9FA">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ZX SDK Demo"
+        android:text="智选广告 SDK Demo"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="#2196F3"
+        android:padding="20dp"
         android:gravity="center" />
 
-    <Button
-        android:id="@+id/btn_banner"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="请求 Banner 广告"
-        android:layout_marginTop="16dp" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_reward"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="请求激励视频"
-        android:layout_marginTop="8dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <Button
-        android:id="@+id/btn_interstitial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="请求插屏广告"
-        android:layout_marginTop="8dp" />
+            <Button
+                android:id="@+id/btn_splash"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="🎨 开屏广告"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
 
-    <Button
-        android:id="@+id/btn_native"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="请求原生广告"
-        android:layout_marginTop="8dp" />
+            <Button
+                android:id="@+id/btn_banner"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="📢 Banner 广告"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
 
-    <Button
-        android:id="@+id/btn_splash"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="请求启屏广告"
-        android:layout_marginTop="8dp" />
+            <Button
+                android:id="@+id/btn_inter"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="📱 插屏广告"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
 
-    <TextView
-        android:id="@+id/tv_log"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/darker_gray"
-        android:textColor="@android:color/white"
-        android:padding="8dp"
-        android:text="日志输出..." />
+            <Button
+                android:id="@+id/btn_reward"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="🎁 激励视频"
+                android:textSize="18sp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btn_native"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="🎯 原生广告"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
