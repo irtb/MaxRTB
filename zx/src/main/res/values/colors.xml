@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 基础颜色 -->
+    <color name="zx_white">#FFFFFF</color>
+    <color name="zx_black">#000000</color>
+    <color name="zx_gray">#808080</color>
+    <color name="zx_light_gray">#F5F5F5</color>
+    <color name="zx_dark_gray">#404040</color>
+
+    <!-- 主题颜色 -->
+    <color name="zx_primary">#2196F3</color>
+    <color name="zx_primary_dark">#1976D2</color>
+    <color name="zx_accent">#FF6B6B</color>
+
+    <!-- 广告相关 -->
+    <color name="zx_ad_badge">#999999</color>
+    <color name="zx_skip_button">#CCCCCC</color>
+    <color name="zx_cta_button">#FF6B6B</color>
+    <color name="zx_cta_button_text">#FFFFFF</color>
+
+    <!-- 文字颜色 -->
+    <color name="zx_text_primary">#212121</color>
+    <color name="zx_text_secondary">#757575</color>
+    <color name="zx_text_hint">#BDBDBD</color>
+
+</resources>

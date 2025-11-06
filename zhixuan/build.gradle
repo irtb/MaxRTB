@@ -1,148 +1,79 @@
-plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'maven-publish'
-}
-
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.maxrtb.zhixuan'
-    compileSdk 34
-
-    buildFeatures {
-        buildConfig true
-    }
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
-        minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "1.0.0"
-
-        consumerProguardFiles "consumer-rules.pro"
-
-        buildConfigField "String", "ZHIXUAN_BASE_URL", "https://m1.apifoxmock.com/m1/7056903-6777091-6404548/"
-    }
-
-    buildFeatures {
-        buildConfig true
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         debug {
-            // 测试版本
-            buildConfigField "String", "ZHIXUAN_BASE_URL", "\"https://m1.apifoxmock.com/m1/7056903-6777091-6404548/\""
+            minifyEnabled false
         }
         release {
-            // 生产版本
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "ZHIXUAN_BASE_URL", "\"https://api.zhixuan.com/\""
         }
+    }
+
+    buildFeatures {
+        viewBinding false
+        buildConfig true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '11'
     }
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            // withJavadocJar() // 若无 javadoc 可先不加
-        }
+    lint {
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
+        checkReleaseBuilds false
+        abortOnError false
     }
-
 }
 
 dependencies {
-    implementation project(':core')
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    // Kotlin
+    implementation rootProject.ext.libraries.kotlinStdlib
+    implementation rootProject.ext.libraries.kotlinCoroutinesCore
+    implementation rootProject.ext.libraries.kotlinCoroutinesAndroid
 
-    // 网络
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    // AndroidX
+    implementation rootProject.ext.libraries.androidxCore
+    implementation rootProject.ext.libraries.androidxAppcompat
+    implementation rootProject.ext.libraries.androidxConstraint
+
+    // 网络框架（新增）
+    implementation rootProject.ext.libraries.okhttp3
+    implementation rootProject.ext.libraries.okhttpLogging
+    implementation rootProject.ext.libraries.retrofit2
+    implementation rootProject.ext.libraries.retrofitGson
+    implementation rootProject.ext.libraries.retrofitScalars
+
+    // 序列化
+    implementation rootProject.ext.libraries.gson
 
     // 图片加载
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation rootProject.ext.libraries.glide
+    kapt rootProject.ext.libraries.glideCompiler
 
-    // 协程
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-
-    // Google Play Services
-    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+    // 测试
+    testImplementation rootProject.ext.libraries.junit
+    androidTestImplementation rootProject.ext.libraries.testExt
+    androidTestImplementation rootProject.ext.libraries.espresso
 }
-
-// 生成AAR任务
-def libraryVersionName = android.defaultConfig.versionName
-
-android.libraryVariants.all { variant ->
-    variant.outputs.all { output ->
-        outputFileName = "zhixuan-${variant.name}-${libraryVersionName}.aar"
-    }
-}
-
-// Maven发布配置
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components["release"]
-
-                groupId = 'com.maxrtb'
-                artifactId = 'zhixuan'
-                version = android.defaultConfig.versionName
-
-                pom {
-                    name = 'Zhixuan SDK'
-                    description = 'Zhixuan Ad SDK for Android'
-                    url = 'https://github.com/maxrtb/zhixuan-sdk'
-
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = 'maxrtb'
-                            name = 'MaxRTB Team'
-                            email = 'dev@maxrtb.com'
-                        }
-                    }
-                }
-            }
-        }
-
-        repositories {
-            maven {
-                name = "local"
-                url = uri("${rootProject.buildDir}/maven")
-            }
-        }
-    }
-}
-
-// afterEvaluate {
-//     publishing {
-//         publications {
-//             register("release", MavenPublication) {
-//                 from components["release"]
-//                 groupId = "com.maxrtb"
-//                 artifactId = "zhixuan"
-//                 version = "1.0.0"
-//             }
-//         }
-//     }
-// }
-

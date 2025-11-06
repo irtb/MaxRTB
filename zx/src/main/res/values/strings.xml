@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ZX SDK</string>
+
+    <!-- 启屏广告 -->
+    <string name="zx_splash_skip">跳过</string>
+    <string name="zx_splash_loading">加载中...</string>
+
+    <!-- 激励视频 -->
+    <string name="zx_reward_video_loading">视频加载中...</string>
+    <string name="zx_reward_complete">恭喜！您已获得奖励</string>
+    <string name="zx_reward_close">关闭</string>
+
+    <!-- 插屏广告 -->
+    <string name="zx_interstitial_close">关闭广告</string>
+
+    <!-- 原生广告 -->
+    <string name="zx_native_ad_label">广告</string>
+    <string name="zx_native_cta">查看详情</string>
+
+    <!-- 错误提示 -->
+    <string name="zx_error_network">网络错误</string>
+    <string name="zx_error_timeout">请求超时</string>
+    <string name="zx_error_no_ads">暂无广告</string>
+    <string name="zx_error_invalid_slot">无效的广告位</string>
+
+</resources>

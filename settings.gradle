@@ -1,13 +1,31 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "MaxRTB"
+
 include ':core'
-
-// 新增模块
-include ':zhixuan'
-include ':zxdemo'
-
-// 暂时注释掉其他模块
-// include ':ks'
-// include ':gdt'
-// include ':csj'
+include ':zx'
+include ':zxdm'
 // include ':baidu'
+// include ':csj'
 // include ':demo'
+// include ':gdt'
+// include ':ks'
 // include ':mg'
+// include ':zhixuan'
+// include ':zxdemo'

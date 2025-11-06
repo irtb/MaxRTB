@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Banner 广告属性 -->
+    <declare-styleable name="BannerAdView">
+        <attr name="banner_width" format="dimension" />
+        <attr name="banner_height" format="dimension" />
+        <attr name="banner_background" format="color" />
+    </declare-styleable>
+
+    <!-- 启屏广告属性 -->
+    <declare-styleable name="SplashAdView">
+        <attr name="splash_skip_time" format="integer" />
+        <attr name="splash_skip_text" format="string" />
+        <attr name="splash_skip_bg" format="color" />
+    </declare-styleable>
+
+    <!-- 原生广告属性 -->
+    <declare-styleable name="NativeAdView">
+        <attr name="native_template" format="enum">
+            <enum name="simple1" value="1" />
+            <enum name="simple2" value="2" />
+            <enum name="simple3" value="3" />
+        </attr>
+        <attr name="native_bg_color" format="color" />
+    </declare-styleable>
+
+</resources>

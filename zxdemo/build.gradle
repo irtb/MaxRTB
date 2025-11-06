@@ -1,26 +1,30 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     namespace 'com.maxrtb.zxdemo'
-
     compileSdkVersion rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
         applicationId "com.maxrtb.zxdemo"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 1
-        versionName "1.0.0"
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         debug {
             minifyEnabled false
             debuggable true
+            // 不使用签名配置，让 Gradle 自动生成
         }
         release {
             minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -31,29 +35,52 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
-    lintOptions {
+    lint {
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
+        checkReleaseBuilds false
         abortOnError false
     }
 }
 
 dependencies {
-    implementation project(':core')
-    implementation project(':zhixuan')
+    // ZX SDK
+    implementation project(':zx')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // Kotlin
+    implementation rootProject.ext.libraries.kotlinStdlib
+    implementation rootProject.ext.libraries.kotlinCoroutinesCore
+    implementation rootProject.ext.libraries.kotlinCoroutinesAndroid
 
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    // AndroidX
+    implementation rootProject.ext.libraries.androidxCore
+    implementation rootProject.ext.libraries.androidxAppcompat
+    implementation rootProject.ext.libraries.androidxConstraint
+    implementation rootProject.ext.libraries.material
+    implementation rootProject.ext.libraries.lifecycleRuntime
+    implementation rootProject.ext.libraries.lifecycleViewModel
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    // 网络框架
+    implementation rootProject.ext.libraries.okhttp3
+    implementation rootProject.ext.libraries.okhttpLogging
+    implementation rootProject.ext.libraries.retrofit2
+    implementation rootProject.ext.libraries.retrofitGson
+    implementation rootProject.ext.libraries.gson
+
+    // 图片加载
+    implementation rootProject.ext.libraries.glide
+    kapt rootProject.ext.libraries.glideCompiler
+
+    // 测试
+    testImplementation rootProject.ext.libraries.junit
+    androidTestImplementation rootProject.ext.libraries.testExt
+    androidTestImplementation rootProject.ext.libraries.espresso
 }

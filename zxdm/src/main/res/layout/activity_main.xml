@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ZX SDK Demo"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/btn_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请求 Banner 广告"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btn_reward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请求激励视频"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_interstitial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请求插屏广告"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_native"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请求原生广告"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btn_splash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请求启屏广告"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tv_log"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/darker_gray"
+        android:textColor="@android:color/white"
+        android:padding="8dp"
+        android:text="日志输出..." />
+
+</LinearLayout>

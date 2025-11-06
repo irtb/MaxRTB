@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <files-path
+        name="zx_files"
+        path="." />
+
+    <cache-path
+        name="zx_cache"
+        path="." />
+
+    <external-cache-path
+        name="zx_external_cache"
+        path="." />
+
+</paths>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Banner 尺寸 -->
+    <dimen name="zx_banner_width_320">320dp</dimen>
+    <dimen name="zx_banner_height_50">50dp</dimen>
+    <dimen name="zx_banner_height_90">90dp</dimen>
+    <dimen name="zx_banner_height_250">250dp</dimen>
+
+    <!-- 启屏尺寸 -->
+    <dimen name="zx_splash_skip_button_width">60dp</dimen>
+    <dimen name="zx_splash_skip_button_height">30dp</dimen>
+    <dimen name="zx_splash_skip_text_size">12sp</dimen>
+
+    <!-- 原生广告尺寸 -->
+    <dimen name="zx_native_icon_size">40dp</dimen>
+    <dimen name="zx_native_title_text_size">16sp</dimen>
+    <dimen name="zx_native_desc_text_size">14sp</dimen>
+
+    <!-- 间距 -->
+    <dimen name="zx_spacing_xxs">4dp</dimen>
+    <dimen name="zx_spacing_xs">8dp</dimen>
+    <dimen name="zx_spacing_sm">12dp</dimen>
+    <dimen name="zx_spacing_md">16dp</dimen>
+    <dimen name="zx_spacing_lg">20dp</dimen>
+    <dimen name="zx_spacing_xl">24dp</dimen>
+
+</resources>

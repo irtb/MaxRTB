@@ -1,54 +1,75 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-// JitPack Maven
-// apply plugin: 'com.github.dcendents.android-maven'
-// group = 'com.github.ifmvo'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
 
 android {
-    // AGP 8.0+ 必须指定namespace
     namespace 'com.ifmvo.togetherad.core'
-
-    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    compileSdk rootProject.ext.android.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.android.minSdkVersion
-        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        minSdk rootProject.ext.android.minSdkVersion
+        targetSdk rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
 
-        consumerProguardFiles 'consumer-rules.pro'
-    }
-
-    lintOptions {
-        abortOnError false
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            consumerProguardFiles 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    lint {
+        abortOnError false
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation rootProject.ext.libraries.kotlinStdlib
+    implementation rootProject.ext.libraries.kotlinCoroutinesCore
+    implementation rootProject.ext.libraries.kotlinCoroutinesAndroid
+    implementation rootProject.ext.libraries.androidxCore
+    implementation rootProject.ext.libraries.androidxAppcompat
+    implementation rootProject.ext.libraries.androidxConstraint
+    implementation rootProject.ext.libraries.material
+    implementation rootProject.ext.libraries.lifecycleRuntime
+    implementation rootProject.ext.libraries.lifecycleViewModel
+    implementation rootProject.ext.libraries.okhttp3
+    implementation rootProject.ext.libraries.okhttpLogging
+    implementation rootProject.ext.libraries.gson
+    implementation rootProject.ext.libraries.glide
+    kapt rootProject.ext.libraries.glideCompiler
 
-    // AndroidX核心库
-    api 'androidx.core:core-ktx:1.12.0'
-    api 'androidx.appcompat:appcompat:1.6.1'
-
-    // 协程
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
+    testImplementation rootProject.ext.libraries.junit
+    testImplementation rootProject.ext.libraries.mockito
+    testImplementation rootProject.ext.libraries.mockitoKotlin
+    testImplementation rootProject.ext.libraries.coroutinesTest
+    
+    androidTestImplementation rootProject.ext.libraries.testExt
+    androidTestImplementation rootProject.ext.libraries.espresso
 }
