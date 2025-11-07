@@ -1,46 +1,108 @@
 package com.maxrtb.zx.provider
 
 import android.app.Activity
-import com.maxrtb.zx.listener.ZXBaseListener
-import com.maxrtb.zx.model.AdData
+import android.app.Dialog
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.Button
+import android.graphics.Color
+import com.bumptech.glide.Glide
+import com.ifmvo.togetherad.core.listener.InterListener
+import com.ifmvo.togetherad.core.provider.BaseAdProvider
 
-class ZXProviderInterstitial : BaseZXProvider() {
-    override suspend fun requestAd(
+/**
+ * ZX插屏广告提供商
+ */
+abstract class ZXProviderInterstitial : BaseAdProvider() {
+
+    private var mInterstitialDialog: Dialog? = null
+    private var mInterListener: InterListener? = null
+    private var isInterLoaded = false
+
+    override fun requestInterAd(
         activity: Activity,
-        slotId: String,
-        listener: ZXBaseListener,
-    ): Result<AdData> {
-        this.listener = listener
-        return try {
-            _adData = AdData(
-                adId = "inter_${System.currentTimeMillis()}",
-                adName = "Interstitial Ad",
-                adType = "interstitial",
-                title = "插屏广告",
-                desc = "这是一个插屏广告",
-                imageUrl = "https://via.placeholder.com/600x800",
-                ctaText = "立即下载",
-                landingPageUrl = "https://example.com",
-            )
-            onAdLoaded()
-            Result.success(_adData!!)
+        adProviderType: String,
+        alias: String,
+        listener: InterListener
+    ) {
+        mInterListener = listener
+        
+        callbackInterStartRequest(adProviderType, alias, listener)
+
+        try {
+            Thread {
+                Thread.sleep(1500)
+                isInterLoaded = true
+                callbackInterLoaded(adProviderType, alias, listener)
+            }.start()
         } catch (e: Exception) {
-            onAdLoadFailed(e.message ?: "Unknown error")
-            Result.failure(e)
+            callbackInterFailed(adProviderType, alias, listener, -1, e.message)
         }
     }
-    
-    override suspend fun showAd(activity: Activity): Result<Unit> {
-        return try {
-            if (_adData == null) throw IllegalStateException("Ad data is null")
-            onAdShown()
-            Result.success(Unit)
+
+    override fun showInterAd(activity: Activity) {
+        if (!isInterLoaded || mInterListener == null) {
+            return
+        }
+
+        try {
+            mInterstitialDialog = Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar).apply {
+                val container = FrameLayout(activity).apply {
+                    layoutParams = ViewGroup.LayoutParams(600, 800)
+                    setBackgroundColor(Color.WHITE)
+
+                    // 添加广告图片
+                    val imageView = ImageView(activity).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT
+                        )
+                        Glide.with(activity)
+                            .load("https://via.placeholder.com/600x700")
+                            .into(this)
+                        
+                        setOnClickListener {
+                            mInterListener?.let { 
+                                callbackInterClicked("zx", it) 
+                            }
+                        }
+                    }
+                    addView(imageView)
+
+                    // 添加关闭按钮
+                    val closeButton = Button(activity).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            100, 100,
+                            android.view.Gravity.TOP or android.view.Gravity.RIGHT
+                        )
+                        text = "✕"
+                        setOnClickListener {
+                            dismiss()
+                            mInterListener?.let { 
+                                callbackInterClosed("zx", it) 
+                            }
+                        }
+                    }
+                    addView(closeButton)
+                }
+
+                setContentView(container)
+                show()
+
+                mInterListener?.let { listener ->
+                    callbackInterExpose("zx", listener)
+                }
+            }
         } catch (e: Exception) {
-            Result.failure(e)
+            e.printStackTrace()
         }
     }
-    
-    override suspend fun destroyAd() {
-        _adData = null
+
+    override fun destroyInterAd() {
+        mInterstitialDialog?.dismiss()
+        mInterstitialDialog = null
+        mInterListener = null
+        isInterLoaded = false
     }
 }

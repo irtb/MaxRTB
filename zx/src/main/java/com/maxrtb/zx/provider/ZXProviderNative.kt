@@ -1,49 +1,89 @@
 package com.maxrtb.zx.provider
 
 import android.app.Activity
-import com.maxrtb.zx.listener.ZXBaseListener
-import com.maxrtb.zx.model.AdData
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.FrameLayout
+import com.bumptech.glide.Glide
+import com.ifmvo.togetherad.core.listener.NativeListener
+import com.ifmvo.togetherad.core.provider.BaseAdProvider
 
-class ZXProviderNative : BaseZXProvider() {
-    override suspend fun requestAd(
+/**
+ * ZX原生广告提供商
+ */
+abstract class ZXProviderNative : BaseAdProvider() {
+
+    private val nativeAdList = mutableListOf<Any>()
+
+    override fun getNativeAdList(
         activity: Activity,
-        slotId: String,
-        listener: ZXBaseListener,
-    ): Result<AdData> {
-        this.listener = listener
-        return try {
-            _adData = AdData(
-                adId = "native_${System.currentTimeMillis()}",
-                adName = "Native Ad",
-                adType = "native",
-                title = "原生广告",
-                desc = "这是一个原生广告示例",
-                iconUrl = "https://via.placeholder.com/40x40",
-                imageUrl = "https://via.placeholder.com/300x200",
-                price = "¥99.99",
-                rating = "★★★★★",
-                ctaText = "查看详情",
-                landingPageUrl = "https://example.com",
-            )
-            onAdLoaded()
-            Result.success(_adData!!)
+        adProviderType: String,
+        alias: String,
+        maxCount: Int,
+        listener: NativeListener
+    ) {
+        callbackNativeStartRequest(adProviderType, alias, listener)
+
+        try {
+            Thread {
+                Thread.sleep(1500)
+                
+                // 模拟创建原生广告对象
+                nativeAdList.clear()
+                for (i in 0 until maxCount) {
+                    nativeAdList.add(
+                        NativeAdObject(
+                            title = "原生广告 $i",
+                            description = "这是一个模拟的原生广告",
+                            imageUrl = "https://via.placeholder.com/300x200",
+                            clickUrl = "https://example.com"
+                        )
+                    )
+                }
+                
+                callbackNativeLoaded(adProviderType, alias, listener, nativeAdList)
+            }.start()
         } catch (e: Exception) {
-            onAdLoadFailed(e.message ?: "Unknown error")
-            Result.failure(e)
+            callbackNativeFailed(adProviderType, alias, listener, -1, e.message)
         }
     }
-    
-    override suspend fun showAd(activity: Activity): Result<Unit> {
-        return try {
-            if (_adData == null) throw IllegalStateException("Ad data is null")
-            onAdShown()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+
+    override fun nativeAdIsBelongTheProvider(adObject: Any): Boolean {
+        return adObject is NativeAdObject
+    }
+
+    override fun resumeNativeAd(adObject: Any) {
+        if (adObject is NativeAdObject) {
+            adObject.isActive = true
         }
     }
-    
-    override suspend fun destroyAd() {
-        _adData = null
+
+    override fun pauseNativeAd(adObject: Any) {
+        if (adObject is NativeAdObject) {
+            adObject.isActive = false
+        }
+    }
+
+    override fun destroyNativeAd(adObject: Any) {
+        if (adObject is NativeAdObject) {
+            adObject.destroy()
+        }
+    }
+
+    /**
+     * 原生广告对象
+     */
+    data class NativeAdObject(
+        val title: String,
+        val description: String,
+        val imageUrl: String,
+        val clickUrl: String,
+        var isActive: Boolean = true
+    ) {
+        fun destroy() {
+            isActive = false
+        }
     }
 }

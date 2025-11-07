@@ -1,45 +1,78 @@
 package com.maxrtb.zx.provider
 
 import android.app.Activity
-import com.maxrtb.zx.listener.ZXBaseListener
-import com.maxrtb.zx.model.AdData
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.ifmvo.togetherad.core.listener.BannerListener
+import com.ifmvo.togetherad.core.provider.BaseAdProvider
 
-class ZXProviderBanner : BaseZXProvider() {
-    override suspend fun requestAd(
+/**
+ * ZX Banner广告提供商
+ */
+abstract class ZXProviderBanner : BaseAdProvider() {
+
+    private var mBannerView: FrameLayout? = null
+    private var bannerImageView: ImageView? = null
+
+    override fun showBannerAd(
         activity: Activity,
-        slotId: String,
-        listener: ZXBaseListener,
-    ): Result<AdData> {
-        this.listener = listener
-        return try {
-            _adData = AdData(
-                adId = "banner_${System.currentTimeMillis()}",
-                adName = "Banner Ad",
-                adType = "banner",
-                title = "Banner 广告",
-                desc = "这是一个 Banner 广告",
-                imageUrl = "https://via.placeholder.com/320x50",
-                landingPageUrl = "https://example.com",
-            )
-            onAdLoaded()
-            Result.success(_adData!!)
+        adProviderType: String,
+        alias: String,
+        container: ViewGroup,
+        listener: BannerListener
+    ) {
+        destroyBannerAd()
+        
+        callbackBannerStartRequest(adProviderType, alias, listener)
+
+        try {
+            createBannerView(activity, adProviderType, listener, container)
+            
+            Thread {
+                Thread.sleep(1000)
+                callbackBannerLoaded(adProviderType, alias, listener)
+                Thread.sleep(300)
+                callbackBannerExpose(adProviderType, listener)
+            }.start()
         } catch (e: Exception) {
-            onAdLoadFailed(e.message ?: "Unknown error")
-            Result.failure(e)
+            callbackBannerFailed(adProviderType, alias, listener, -1, e.message)
         }
     }
-    
-    override suspend fun showAd(activity: Activity): Result<Unit> {
-        return try {
-            if (_adData == null) throw IllegalStateException("Ad data is null")
-            onAdShown()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+
+    private fun createBannerView(
+        activity: Activity,
+        adProviderType: String,
+        listener: BannerListener,
+        container: ViewGroup
+    ) {
+        mBannerView = FrameLayout(activity).apply {
+            layoutParams = ViewGroup.LayoutParams(320, 50)
+            setBackgroundColor(android.graphics.Color.WHITE)
+
+            bannerImageView = ImageView(activity).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
+                Glide.with(activity)
+                    .load("https://via.placeholder.com/320x50")
+                    .into(this)
+                
+                setOnClickListener {
+                    callbackBannerClicked(adProviderType, listener)
+                }
+            }
+            
+            addView(bannerImageView)
         }
+
+        container.addView(mBannerView)
     }
-    
-    override suspend fun destroyAd() {
-        _adData = null
+
+    override fun destroyBannerAd() {
+        bannerImageView = null
+        mBannerView = null
     }
 }

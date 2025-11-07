@@ -1,46 +1,73 @@
 package com.maxrtb.zx.provider
 
 import android.app.Activity
-import com.maxrtb.zx.listener.ZXBaseListener
-import com.maxrtb.zx.model.AdData
+import com.ifmvo.togetherad.core.listener.RewardListener
+import com.ifmvo.togetherad.core.provider.BaseAdProvider
 
-class ZXProviderReward : BaseZXProvider() {
-    override suspend fun requestAd(
+/**
+ * ZX激励视频提供商
+ */
+abstract class ZXProviderReward : BaseAdProvider() {
+
+    private var mRewardListener: RewardListener? = null
+    private var isRewardLoaded = false
+
+    override fun requestAndShowRewardAd(
         activity: Activity,
-        slotId: String,
-        listener: ZXBaseListener,
-    ): Result<AdData> {
-        this.listener = listener
-        return try {
-            _adData = AdData(
-                adId = "reward_${System.currentTimeMillis()}",
-                adName = "Reward Video",
-                adType = "reward",
-                title = "激励视频",
-                desc = "观看视频获得奖励",
-                imageUrl = "https://via.placeholder.com/300x300",
-                ctaText = "观看视频",
-                landingPageUrl = "https://example.com",
-            )
-            onAdLoaded()
-            Result.success(_adData!!)
+        adProviderType: String,
+        alias: String,
+        listener: RewardListener
+    ) {
+        requestRewardAd(activity, adProviderType, alias, listener)
+        showRewardAd(activity)
+    }
+
+    override fun requestRewardAd(
+        activity: Activity,
+        adProviderType: String,
+        alias: String,
+        listener: RewardListener
+    ) {
+        mRewardListener = listener
+        
+        callbackRewardStartRequest(adProviderType, alias, listener)
+
+        try {
+            Thread {
+                Thread.sleep(2000)
+                isRewardLoaded = true
+                callbackRewardLoaded(adProviderType, alias, listener)
+                Thread.sleep(300)
+                callbackRewardVideoCached(adProviderType, listener)
+            }.start()
         } catch (e: Exception) {
-            onAdLoadFailed(e.message ?: "Unknown error")
-            Result.failure(e)
+            callbackRewardFailed(adProviderType, alias, listener, -1, e.message)
         }
     }
-    
-    override suspend fun showAd(activity: Activity): Result<Unit> {
-        return try {
-            if (_adData == null) throw IllegalStateException("Ad data is null")
-            onAdShown()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+
+    override fun showRewardAd(activity: Activity): Boolean {
+        if (!isRewardLoaded || mRewardListener == null) {
+            return false
         }
-    }
-    
-    override suspend fun destroyAd() {
-        _adData = null
+
+        try {
+            mRewardListener?.let { listener ->
+                callbackRewardShow("zx", listener)
+                callbackRewardExpose("zx", listener)
+                
+                Thread {
+                    Thread.sleep(3000)
+                    callbackRewardVideoComplete("zx", listener)
+                    Thread.sleep(500)
+                    callbackRewardVerify("zx", listener)
+                    Thread.sleep(300)
+                    callbackRewardClosed("zx", listener)
+                }.start()
+            }
+            
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 }

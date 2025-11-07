@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     namespace 'com.maxrtb.zxdm'
     compileSdk rootProject.ext.android.compileSdkVersion
-    
+
     defaultConfig {
         applicationId "com.maxrtb.zxdm"
         minSdk rootProject.ext.android.minSdkVersion
